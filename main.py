@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def trapmf(x, params):
-    assert len(params) == 4, 'abcd parameter must have exactly four elements.'
+    assert len(params) == 4
     a, b, c, d = np.r_[params]
-    assert a <= b and b <= c and c <= d, 'abcd requires the four elements \
-                                          a <= b <= c <= d.'
+    assert a <= b and b <= c and c <= d
+
     y = np.ones(len(x))
 
     idx = np.nonzero(x <= b)[0]
@@ -31,9 +31,9 @@ def gaussmf(x, mean, sigma):
     return np.exp(-((x - mean)**2.) / (2 * sigma**2.))
 
 def trimf(x, params):
-    assert len(params) == 3, 'abc parameter must have exactly three elements.'
+    assert len(params) == 3
     a, b, c = np.r_[params]     # Zero-indexing in Python
-    assert a <= b and b <= c, 'abc requires the three elements a <= b <= c.'
+    assert a <= b and b <= c
 
     y = np.zeros(len(x))
 
@@ -56,7 +56,6 @@ def interp_membership(x, mf, x_val):
 def defuzz(x, mf, method='centroid'):
     if method == 'centroid':
         return np.sum(x * mf) / np.sum(mf)
-    # Add more defuzzification methods if needed
     else:
         raise ValueError("Invalid defuzzification method")
 
@@ -147,8 +146,8 @@ def fuzzy_logic_tip(service_quality, food_quality, window):
     ax5.plot(x_tip, tip_average, 'g', linewidth=0.5, linestyle='--')
     ax5.plot(x_tip, tip_generous, 'r', linewidth=0.5, linestyle='--')
     ax5.fill_between(x_tip, tip0, aggregated, facecolor='Black', alpha=0.7)
-    ax5.plot([tip, tip], [0, tip_activation], 'k', linewidth=1, alpha=0.9)
-    ax5.set_title('Aggregated membership and result (line)')
+    ax5.plot([tip, tip], [0, tip_activation], 'Yellow', linewidth=1, alpha=0.9)
+    ax5.set_title('Aggregated membership and result (Line)')
 
     plt.tight_layout()
 
