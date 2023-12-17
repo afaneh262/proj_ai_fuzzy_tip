@@ -107,21 +107,21 @@ def fuzzy_logic_tip(service_quality, food_quality, window):
     food_qual_level_rancid = interp_membership(x_food_qual, food_qual_rancid, food_quality)
     food_qual_level_delicious = interp_membership(x_food_qual, food_qual_delicious, food_quality)
 
-    food_qual_level_poor = interp_membership(x_serv, serv_poor, service_quality)
-    food_qual_level_good = interp_membership(x_serv, serv_good, service_quality)
-    food_qual_level_excellent = interp_membership(x_serv, serv_excellent, service_quality)
+    serv_qual_level_poor = interp_membership(x_serv, serv_poor, service_quality)
+    serv_qual_level_good = interp_membership(x_serv, serv_good, service_quality)
+    serv_qual_level_excellent = interp_membership(x_serv, serv_excellent, service_quality)
 
     # Apply rules
     # Rule 1: If the service is poor or the food is rancid, then tip is cheap.
     # The OR operator means we take the maximum of these two.
-    active_rule1 = np.fmax(food_qual_level_rancid, food_qual_level_poor)
+    active_rule1 = np.fmax(food_qual_level_rancid, serv_qual_level_poor)
     tip_activation_cheap = np.fmin(active_rule1, tip_cheap)  # removed entirely to 0
 
     # Rule 2: If the service is good, then tip is average.
-    tip_activation_average = np.fmin(food_qual_level_good, tip_average)
+    tip_activation_average = np.fmin(serv_qual_level_good, tip_average)
 
     # Rule 3: If the service is excellent or the food is delicious, then tip is generous.
-    active_rule3 = np.fmax(food_qual_level_delicious, food_qual_level_excellent)
+    active_rule3 = np.fmax(food_qual_level_delicious, serv_qual_level_excellent)
     tip_activation_generous = np.fmin(active_rule3, tip_generous)
 
     tip0 = np.zeros_like(x_tip)
@@ -136,8 +136,7 @@ def fuzzy_logic_tip(service_quality, food_quality, window):
     ax4.set_title('Output membership activity')
 
     # Aggregate all three output membership functions together
-    aggregated = np.fmax(tip_activation_cheap,
-                        np.fmax(tip_activation_average, tip_activation_generous))
+    aggregated = np.fmax(np.fmax(tip_activation_cheap, tip_activation_average), tip_activation_generous)
 
     # Calculate defuzzified result
     tip = defuzz(x_tip, aggregated, 'centroid')
@@ -147,7 +146,7 @@ def fuzzy_logic_tip(service_quality, food_quality, window):
     ax5.plot(x_tip, tip_cheap, 'b', linewidth=0.5, linestyle='--', )
     ax5.plot(x_tip, tip_average, 'g', linewidth=0.5, linestyle='--')
     ax5.plot(x_tip, tip_generous, 'r', linewidth=0.5, linestyle='--')
-    ax5.fill_between(x_tip, tip0, aggregated, facecolor='Yellow', alpha=0.7)
+    ax5.fill_between(x_tip, tip0, aggregated, facecolor='Black', alpha=0.7)
     ax5.plot([tip, tip], [0, tip_activation], 'k', linewidth=1, alpha=0.9)
     ax5.set_title('Aggregated membership and result (line)')
 
